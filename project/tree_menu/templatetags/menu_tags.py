@@ -10,12 +10,13 @@ register = template.Library()
 def draw_menu(context, menu_name):
     request = context['request']
     current_url = request.path
-    menu_item = MenuItem.objects.get(name=menu_name)
+    menu_item = MenuItem.objects.filter(name=menu_name).last()
 
+    menu_items = []
     if current_url.startswith(menu_item.get_absolute_url()):
-        menu_items = _get_parent_items(menu_item)
-        menu_items.append(menu_item)
-        return mark_safe(_draw_menu(menu_items, current_url))
+        menu_items += _get_parent_items(menu_item)
+    menu_items.append(menu_item)
+    return mark_safe(_draw_menu(menu_items, current_url))
 
 
 def _draw_menu(menu_items, current_url, number=0):
